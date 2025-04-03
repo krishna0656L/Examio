@@ -1,0 +1,4 @@
+# Final version without conflict markers
+node_modules/
+.env
+dist/
