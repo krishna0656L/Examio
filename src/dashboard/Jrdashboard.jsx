@@ -4,6 +4,7 @@ import { IoDocumentAttach } from "react-icons/io5";
 
 function Jrdashboard() {
   const [seniorname, setSeniorname] = useState("");
+  const [subjectname, setSubjectname] = useState("");
   const [files, setFiles] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,15 +14,18 @@ function Jrdashboard() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(`${apiUrl}/Jrdashboard?seniorname=${seniorname}`);
+      const response = await fetch(
+        `${apiUrl}/Jrdashboard?seniorname=${encodeURIComponent(seniorname)}&subjectname=${encodeURIComponent(subjectname)}`
+      );
       if (!response.ok) {
-        throw new Error("Failed to fetch files");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to fetch files");
       }
       const data = await response.json();
       setFiles(data.files);
     } catch (error) {
       console.error("Error fetching files:", error);
-      setError("Failed to fetch files. Please try again.");
+      setError(error.message === "Failed to fetch files" ? "Failed to fetch files. Please try again." : error.message);
       setFiles([]);
     } finally {
       setLoading(false);
@@ -30,8 +34,8 @@ function Jrdashboard() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!seniorname.trim()) {
-      setError("Please enter the senior's name");
+    if (!seniorname.trim() && !subjectname.trim()) {
+      setError("Please enter either the senior's name or subject name");
       return;
     }
     setError("");
@@ -66,6 +70,22 @@ function Jrdashboard() {
               placeholder="Enter the senior's username"
               value={seniorname}
               onChange={(e) => setSeniorname(e.target.value)}
+            />
+          </div>
+          <div className="mb-6">
+            <label
+              htmlFor="subjectname"
+              className="block text-lg font-medium text-gray-800 mb-2"
+            >
+              Subject Name
+            </label>
+            <input
+              type="text"
+              id="subjectname"
+              className="w-full rounded-lg border-gray-300 focus:border-blue-600 focus:ring-blue-600 p-3"
+              placeholder="Enter the subject name"
+              value={subjectname}
+              onChange={(e) => setSubjectname(e.target.value)}
             />
           </div>
           {error && <p className="text-red-500">{error}</p>}
@@ -130,7 +150,7 @@ function Jrdashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500">No files found for the specified senior.</p>
+            <p className="text-gray-500">No files found for the specified criteria.</p>
           )}
         </div>
       </div>
