@@ -1,5 +1,5 @@
 import { useState } from "react";
-import AuthNavbar from "../components/Authnavbar";
+import HeaderNavbar from "../components/Authnavbar"; // Keep only HeaderNavbar
 import { IoDocumentAttach } from "react-icons/io5";
 
 function Jrdashboard() {
@@ -25,7 +25,7 @@ function Jrdashboard() {
       setFiles(data.files);
     } catch (error) {
       console.error("Error fetching files:", error);
-      setError(error.message === "Failed to fetch files" ? "Failed to fetch files. Please try again." : error.message);
+      setError("Something went wrong. Please try again.");
       setFiles([]);
     } finally {
       setLoading(false);
@@ -43,115 +43,121 @@ function Jrdashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-gray-100">
-      <AuthNavbar />
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-10">
-          <h1 className="text-5xl font-bold text-gray-900">Junior Dashboard</h1>
-          <p className="text-gray-700 mt-2">
-            Securely manage and view files uploaded by seniors
-          </p>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-lg mx-auto bg-white shadow-2xl rounded-2xl p-8 border border-gray-300"
-        >
-          <div className="mb-6">
-            <label
-              htmlFor="username"
-              className="block text-lg font-medium text-gray-800 mb-2"
-            >
-              Senior's Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              className="w-full rounded-lg border-gray-300 focus:border-blue-600 focus:ring-blue-600 p-3"
-              placeholder="Enter the senior's username"
-              value={seniorname}
-              onChange={(e) => setSeniorname(e.target.value)}
-            />
+    <div
+      className="min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: "url('/Flux_Dev_Minimalist_futuristic_digital_background_with_smooth__0.jpg')" }} // Replace with your image path
+    >
+      <div className="bg-black/60 min-h-screen">
+        {/* Keep only HeaderNavbar for Junior Dashboard */}
+        <HeaderNavbar />
+
+        <div className="container mx-auto px-4 py-20">
+          {/* Form Card */}
+          <div className="max-w-2xl mx-auto bg-white/10 backdrop-blur-lg border border-white/30 shadow-2xl rounded-3xl p-10">
+            <h1 className="text-4xl font-extrabold text-white text-center mb-6">
+              Junior Dashboard
+            </h1>
+            <p className="text-white text-center mb-8">
+              Search notes uploaded by your seniors
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              <div className="mb-6">
+                <label className="block text-white font-semibold mb-2">
+                  Senior's Username
+                </label>
+                <input
+                  type="text"
+                  className="w-full p-3 rounded-xl bg-white/70 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                  placeholder="e.g. john_doe"
+                  value={seniorname}
+                  onChange={(e) => setSeniorname(e.target.value)}
+                />
+              </div>
+              <div className="mb-6">
+                <label className="block text-white font-semibold mb-2">
+                  Subject Name
+                </label>
+                <input
+                  type="text"
+                  className="w-full p-3 rounded-xl bg-white/70 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400"
+                  placeholder="e.g. Operating Systems"
+                  value={subjectname}
+                  onChange={(e) => setSubjectname(e.target.value)}
+                />
+              </div>
+              {error && <p className="text-red-400 mb-4">{error}</p>}
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition duration-300"
+              >
+                Search Notes
+              </button>
+            </form>
           </div>
-          <div className="mb-6">
-            <label
-              htmlFor="subjectname"
-              className="block text-lg font-medium text-gray-800 mb-2"
-            >
-              Subject Name
-            </label>
-            <input
-              type="text"
-              id="subjectname"
-              className="w-full rounded-lg border-gray-300 focus:border-blue-600 focus:ring-blue-600 p-3"
-              placeholder="Enter the subject name"
-              value={subjectname}
-              onChange={(e) => setSubjectname(e.target.value)}
-            />
-          </div>
-          {error && <p className="text-red-500">{error}</p>}
-          <button
-            type="submit"
-            className="w-full py-3 mt-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg transition duration-300 ease-in-out"
-          >
-            Submit
-          </button>
-        </form>
-        <div className="mt-12 bg-white shadow-lg rounded-2xl p-6 border border-gray-300">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Uploaded Files</h1>
-          {loading ? (
-            <p className="text-gray-500">Loading files...</p>
-          ) : files.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {files.map((file, index) => (
-                <div
-                  key={index}
-                  className="bg-white shadow-md rounded-lg p-4 border border-gray-300"
-                >
-                  <h1 className="text-xl font-semibold text-gray-800 mb-2">
-                    {file.subject}
-                  </h1>
-                  <p className="text-gray-500">Uploaded by: {file.username}</p>
-                  {/* File Paths Section */}
-                  <p className="text-gray-500 mt-2">Files:</p>
-                  <ul>
-                    {file.file_paths && file.file_paths.length > 0 ? (
-                      file.file_paths.map((path, idx) => (
-                        <li key={idx} className="flex items-center space-x-2">
-                          <IoDocumentAttach className="text-3xl text-blue-500" />
-                          <a
-                            href={path}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline"
-                          >
-                            {path.split("/").pop() || path}
-                          </a>
-                        </li>
-                      ))
-                    ) : (
-                      <li className="text-gray-500">No file paths available</li>
+
+          {/* Results Section */}
+          <div className="mt-16 max-w-5xl mx-auto bg-white/10 backdrop-blur-lg border border-white/30 shadow-2xl rounded-3xl p-10">
+            <h2 className="text-3xl font-bold text-white text-center mb-6">
+              Search Results
+            </h2>
+            {loading ? (
+              <p className="text-white text-center">Loading files...</p>
+            ) : files.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {files.map((file, index) => (
+                  <div
+                    key={index}
+                    className="p-5 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-gray-900 shadow-lg"
+                  >
+                    <h3 className="text-xl font-bold text-blue-800 mb-2">
+                      {file.subject}
+                    </h3>
+                    <p className="text-gray-700 mb-2">
+                      Uploaded by: <span className="font-semibold">{file.username}</span>
+                    </p>
+
+                    <p className="text-sm font-semibold text-gray-800 mt-2">Files:</p>
+                    <ul className="space-y-1 mt-1">
+                      {file.file_paths && file.file_paths.length > 0 ? (
+                        file.file_paths.map((path, idx) => (
+                          <li key={idx} className="flex items-center space-x-2">
+                            <IoDocumentAttach className="text-xl text-blue-500" />
+                            <a
+                              href={path}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-700 hover:underline"
+                            >
+                              {path.split("/").pop()}
+                            </a>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-gray-600">No file paths available</li>
+                      )}
+                    </ul>
+
+                    {file.links && (
+                      <div className="mt-4">
+                        <p className="text-sm font-semibold text-gray-800">Google Drive Link:</p>
+                        <a
+                          href={file.links}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-700 hover:underline break-all"
+                        >
+                          {file.links}
+                        </a>
+                      </div>
                     )}
-                  </ul>
-                  {/* Main Link Section */}
-                  {file.links && (
-                    <div className="mt-4">
-                      <p className="text-gray-500">Link:</p>
-                      <a
-                        href={file.links}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {file.links}
-                      </a>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">No files found for the specified criteria.</p>
-          )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-white text-center">No files found.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
